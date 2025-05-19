@@ -3,11 +3,18 @@ import requests
 from html import unescape
 from random import randint
 
-questao_num=0
+parametro = 'https://opentdb.com/api.php?amount=10'
+
+questao_num = 0
 numero_a_exibir = 0
 dados = []
 loop = 0
 pontuacao = 0
+erros = 0
+
+game_mode = 0
+#GAME MODE 1 = INFINITO
+#GAME MODE 2 = 10 perguntas
 
 def main(page: ft.Page):
     global pontuacao
@@ -18,21 +25,74 @@ def main(page: ft.Page):
     questao_categoria = ft.Text()
     questao_body = ft.Text()
     pontuacao_txt = ft.Text()
+    erros_exibicao = ft.Text()
 
     resultado = ft.Text(key="texto_resultado")
 
-    def buscar_dados(e,new_game=True):
+    def iniciar_jogo_inf(e):
+        buscar_dados(0, 1)
+    def iniciar_jogo_normal(e):
+        buscar_dados(0, 2)
+
+    def inicio(e=0):
+            questao_atual = ft.Text()
+            questao_tipo = ft.Text()
+            questao_dificuldade = ft.Text()
+            questao_categoria = ft.Text()
+            questao_body = ft.Text()
+            pontuacao_txt = ft.Text()
+            erros_exibicao = ft.Text()
+            botao3 = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf)
+            botao4_ = ft.ElevatedButton("Iniciar Finito", on_click=iniciar_jogo_normal)
+
+            a =[botao3, botao4_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao]
+            for i in a:
+                page.controls.append(i)
+
+            print("\n\n\n\n\n\nINICIO ATIVADO")
+            print(page.controls)
+
+
+    def reset(e=0):
+        print("EJWQOEWIQJEOWQEIJWQOIE")
         global questao_num
         global dados
         global numero_a_exibir
         global loop
+        global game_mode
+        global pontuacao
+        global erros
+
+        questao_num = 0
+        numero_a_exibir = 0
+        dados = []
+        loop = 0
+        pontuacao = 0
+        erros = 0
+        game_mode = 0
+
+        page.controls.clear()
+
+        print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRESET ATIVADO')
+        print(page.controls)
+        inicio()
+
+    def buscar_dados(e, modo=game_mode, new_game=True):
+        global questao_num
+        global dados
+        global numero_a_exibir
+        global loop
+        global game_mode
+        global parametro
+        print("DJKDSKLAJD")
+        game_mode = modo
 
         resultado.value = ''
 
         if new_game == True or questao_num == 10:
             if questao_num ==10:
                 loop+=1
-            response = requests.get("https://opentdb.com/api.php?amount=10")
+            response = requests.get(parametro)
             print(len(response.json()['results']))
             questao_num = 0
             dados = response
@@ -41,16 +101,59 @@ def main(page: ft.Page):
 
         if response.status_code == 200:
             if response.json()['response_code'] == 0:
-                data = response.json()['results'][questao_num-1]
+                game_loop(game_mode, response.json()['results'])
+
+        else:
+            resultado.value = "Erro"
+            print("ERRO")
+        page.update()
+
+    def responder(selecionada, correta):
+        resultado.value = "Correto" if selecionada == correta else "Errado"
+        resultado.size = 20
+
+        if resultado.value == "Correto":
+            global pontuacao
+            pontuacao +=1
+            pontuacao_txt.value = f'Pontuação: {pontuacao}'
+        elif resultado.value == 'Errado':
+            global erros
+            if type(erros_exibicao.value) != str:
+                erros+=1
+                erros_exibicao.value ='❌'
+            else:
+                erros+=1
+                erros_exibicao.value += '❌'
+        
+            
+        page.update()
+        buscar_dados(0,game_mode,False)
+
+    def game_loop(game_mode, dados_):
+        global questao_num
+        global numero_a_exibir
+        global loop
+        global erros
+        if game_mode !=0:
+            #MODO NORMAL
+
+                if questao_num == 10 and game_mode==1:
+                    buscar_dados(0, game_mode, False)
+
+                if erros == 3:
+                    reset()
+                    return
+                
+
+                response = dados_
+                data = response[questao_num-1]
                 print(data)
                 respostas = [unescape(x) for x in data['incorrect_answers']]
                 respostas.append(unescape(data['correct_answer']))
                 respostas_str = ''
                 for x in respostas:
                     respostas_str+=x+'/ '
-                print((respostas_str+unescape(data['question'])).split('/ '))                #print(f'{unescape(data['question'])}, ')
-                #langs = requests.get("http://localhost:5000/languages")
-                #print(langs.json())
+                print((respostas_str+unescape(data['question'])).split('/ '))
                 try:
                     lbt_response = requests.post(
                             "http://localhost:5000/translate",
@@ -100,16 +203,6 @@ def main(page: ft.Page):
                 i = 1
                 num_rnd = randint(1,4)
 
-                # if numero_a_exibir>0:
-                #     #print(page.controls[-4:-1])
-                #     while len(page.controls) >7:
-                #         if not page.controls[-1].key == 'texto_resultado':
-                #             page.controls.remove(page.controls[-1])
-
-                # Remover apenas botões de resposta (ElevatedButton com chave específica)
-                # for ctr in page.controls:
-                #     print(ctr)
-
                 page.controls = [ctrl for ctrl in page.controls if not (isinstance(ctrl, ft.ElevatedButton) and ctrl.key and ctrl.key.startswith("botao_erro"))]
                 page.controls = [ctrl for ctrl in page.controls if not (isinstance(ctrl, ft.ElevatedButton) and ctrl.key and ctrl.key.startswith("RESPOSTA_CORRETA"))]
                 
@@ -119,7 +212,7 @@ def main(page: ft.Page):
                     for resposta in wrong:
                         if i == num_rnd:
                             botao1 = ft.ElevatedButton(right, key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right))
-                            page.add(botao1)
+                            page.controls.append(botao1)
 
                         botao_novo = ft.ElevatedButton(unescape(resposta), on_click=lambda e: responder(resposta,right), key=f'botao_erro1')
                         i+=1
@@ -137,29 +230,10 @@ def main(page: ft.Page):
 
                     page.controls.append(opcoes[0])
 
-                    #print(page.get_control(botao1.uid))
-                #print(ft.ElevatedButton(unescape(data['correct_answer']), on_click=lambda e: responder(unescape(data['correct_answer']),unescape(data['correct_answer']))) in page.controls)
 
-            questao_num+=1
-            numero_a_exibir = questao_num + loop*10
-            questao_atual.value = f"Questão {numero_a_exibir}"
-        else:
-            resultado.value = "Erro"
-            print("ERRO")
-        page.update()
-
-    def responder(selecionada, correta):
-        resultado.value = "Correto" if selecionada == correta else "Errado"
-        resultado.size = 20
-
-        if resultado.value == "Correto":
-            global pontuacao
-            pontuacao +=1
-            pontuacao_txt.value = f'Pontuação: {pontuacao}'
-        
-            
-        page.update()
-        buscar_dados(0,False)
+        questao_num+=1
+        numero_a_exibir = questao_num + loop*10
+        questao_atual.value = f"Questão {numero_a_exibir}"
 
     def encontrar_ctr(key):
         for ctr in page.controls:
@@ -167,8 +241,14 @@ def main(page: ft.Page):
                 if(ctr.key) == key:
                     return ctr
         return False
-    botao = ft.ElevatedButton("Iniciar", on_click=buscar_dados)
+    
+    botao = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf)
+    botao_ = ft.ElevatedButton("Iniciar Finito", on_click=iniciar_jogo_normal)
 
-    page.add(botao, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado)
+    page.add(botao, botao_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao)
 
 ft.app(main)
+
+
+#EXEMPLO API COM TODOS PARAMETROS :
+#https://opentdb.com/api.php?amount=10&category=27&difficulty=easy&type=multiple
