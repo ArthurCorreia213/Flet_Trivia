@@ -4,7 +4,7 @@ from html import unescape
 from random import randint
 
 token = ''
-parametro = f'https://opentdb.com/api.php?amount=10&token={token}'
+parametro = 'https://opentdb.com/api.php?amount=10'
 reset = f'https://opentdb.com/api_token.php?command=reset&token=token'
 
 questao_num = 0
@@ -17,6 +17,8 @@ erros = 0
 correto = ''
 
 categoria_selecionada = ''
+dificuldade = ''
+tipo_de_pergunta = ''
 
 game_mode = 0
 #GAME MODE 1 = INFINITO
@@ -24,36 +26,85 @@ game_mode = 0
 
 def main(page: ft.Page):
     global pontuacao
+    global token
 
-    questao_atual = ft.Text()
-    questao_tipo = ft.Text()
-    questao_dificuldade = ft.Text()
-    questao_categoria = ft.Text()
-    questao_body = ft.Text()
-    pontuacao_txt = ft.Text()
-    erros_exibicao = ft.Text()
+    questao_atual = ft.Text(key='questao_atual')
+    questao_tipo = ft.Text(key='questao_atual1')
+    questao_dificuldade = ft.Text(key='questao_atual2')
+    questao_categoria = ft.Text(key='questao_atual3')
+    questao_body = ft.Text(key='questao_atual4')
+    pontuacao_txt = ft.Text(key='questao_atual5')
+    erros_exibicao = ft.Text(key='questao_atual6')
 
     resultado = ft.Text(key="texto_resultado")
 
     global token
     token_req = requests.get('https://opentdb.com/api_token.php?command=request')
     print(token_req.json()['token'])
-    token = token_req.json()['token']
+    token = f"&token={token_req.json()['token']}"
 
     def iniciar_jogo_inf(e):
+        global categoria_selecionada
+        global dificuldade
+        global tipo_de_pergunta
+        global parametro
+        global token
+        if categoria_selecionada:
+            if categoria_selecionada != 'Qualquer':
+                print(categoria_selecionada)
+                parametro +=f'&category={categoria_selecionada}'
+        if dificuldade:
+            if dificuldade != 'Qualquer dificuldade':
+                print(dificuldade)
+                parametro+=f'&difficulty={dificuldade}'
+        if tipo_de_pergunta:
+            if tipo_de_pergunta != 'Qualquer tipo':
+                print(tipo_de_pergunta)
+                parametro+=f'&type={tipo_de_pergunta}'
+        
+        parametro+=token
+        questao_atual.value = ''
+        print(parametro)
         buscar_dados(0, 1)
+
     def iniciar_jogo_normal(e):
         global categoria_selecionada
+        global dificuldade
+        global tipo_de_pergunta
+        global parametro
+        global token
         if categoria_selecionada:
-            print(categoria_selecionada)
+            if categoria_selecionada != 'Qualquer':
+                print(categoria_selecionada)
+                parametro +=f'&category={categoria_selecionada}'
+        if dificuldade:
+            if dificuldade != 'Qualquer':
+                print(dificuldade)
+                parametro+=f'&difficulty={dificuldade}'
+        if tipo_de_pergunta:
+            if tipo_de_pergunta != 'Qualquer':
+                print(tipo_de_pergunta)
+                parametro+=f'&type={tipo_de_pergunta}'
+        
+        parametro+=token
+        questao_atual.value = ''
+        print(parametro)
         buscar_dados(0, 2)
 
     opcoes_tipos = []
 
-    opcoes_tipos.append(ft.DropdownOption(key='Boolean', content=ft.Text(value='Verdadeiro ou Falso')))
-    opcoes_tipos.append(ft.DropdownOption(key='Multiple', content=ft.Text(value='Múltipla escolha')))
+    opcoes_tipos.append(ft.DropdownOption(key='Qualquer', content=ft.Text(value='Qualquer tipo')))
+    opcoes_tipos.append(ft.DropdownOption(key='boolean', content=ft.Text(value='Verdadeiro ou Falso')))
+    opcoes_tipos.append(ft.DropdownOption(key='multiple', content=ft.Text(value='Múltipla escolha')))
 
-    categorias = [{'id':'None','name':'Qualquer Categoria'},{"id":9,"name":"Conhecimento Geral"},{"id":10,"name":"Livros"},{"id":11,"name":"Filmes"},{"id":12,"name":"Música"},{"id":13,"name":"Teatro e Musicais"},{"id":14,"name":"Televisão"},{"id":15,"name":"Video Games"},{"id":16,"name":"Jogos de Tabuleiro"},{"id":17,"name":"Ciências e Natureza"},{"id":18,"name":"Computadores"},{"id":19,"name":"Matemática"},{"id":20,"name":"Mitologias"},{"id":21,"name":"Esportes"},{"id":22,"name":"Geografia"},{"id":23,"name":"História"},{"id":24,"name":"Politica"},{"id":25,"name":"Arte"},{"id":26,"name":"Celebridades"},{"id":27,"name":"Animais"},{"id":28,"name":"Veiculos"},{"id":29,"name":"Quadrinhos"},{"id":30,"name":"Ferramentas"},{"id":31,"name":"Anime e Mangá"},{"id":32,"name":"Desenhos e Animações"}]
+    dificuldades = []
+
+    dificuldades.append(ft.DropdownOption(key='Qualquer', content=ft.Text(value='Qualquer dificuldade')))
+    dificuldades.append(ft.DropdownOption(key='easy', content=ft.Text(value='Fácil')))
+    dificuldades.append(ft.DropdownOption(key='medium', content=ft.Text(value='Médio')))
+    dificuldades.append(ft.DropdownOption(key='hard', content=ft.Text(value='Difícil')))
+
+    categorias = [{'id':'Qualquer','name':'Qualquer Categoria'},{"id":9,"name":"Conhecimento Geral"},{"id":10,"name":"Livros"},{"id":11,"name":"Filmes"},{"id":12,"name":"Música"},{"id":13,"name":"Teatro e Musicais"},{"id":14,"name":"Televisão"},{"id":15,"name":"Video Games"},{"id":16,"name":"Jogos de Tabuleiro"},{"id":17,"name":"Ciências e Natureza"},{"id":18,"name":"Computadores"},{"id":19,"name":"Matemática"},{"id":20,"name":"Mitologias"},{"id":21,"name":"Esportes"},{"id":22,"name":"Geografia"},{"id":23,"name":"História"},{"id":24,"name":"Politica"},{"id":25,"name":"Arte"},{"id":26,"name":"Celebridades"},{"id":27,"name":"Animais"},{"id":28,"name":"Veiculos"},{"id":29,"name":"Quadrinhos"},{"id":30,"name":"Ferramentas"},{"id":31,"name":"Anime e Mangá"},{"id":32,"name":"Desenhos e Animações"}]
 
     def categorias_func():
         categorias_dd = []
@@ -74,7 +125,23 @@ def main(page: ft.Page):
         # print(encontrar_ctr2(e.control.value))
         # print(page.controls[0])
         global categoria_selecionada
-        categoria_selecionada = page.controls[0]
+        categoria_selecionada = encontrar_id_categoria(page.controls[0].value)
+        page.update()
+
+    def dropdown_changed2(e):
+        e.control.color = e.control.data
+        # print(encontrar_ctr2(e.control.value))
+        # print(page.controls[0])
+        global dificuldade
+        dificuldade = page.controls[1].value
+        page.update()
+
+    def dropdown_changed3(e):
+        e.control.color = e.control.data
+        # print(encontrar_ctr2(e.control.value))
+        # print(page.controls[0])
+        global tipo_de_pergunta
+        tipo_de_pergunta = page.controls[2].value
         page.update()
 
     dd = ft.Dropdown(
@@ -82,33 +149,47 @@ def main(page: ft.Page):
         label="Categorias",
         options=categorias_func(),
         on_change=dropdown_changed,
+        key='dd'
     )
 
-    page.add(dd)
+    dd2 = ft.Dropdown(
+        editable=True,
+        label="Dificuldade",
+        options=dificuldades,
+        on_change=dropdown_changed2,
+        key='dd2'
+    )
+
+    dd3 = ft.Dropdown(
+        editable=True,
+        label="Tipos de pergunta",
+        options=opcoes_tipos,
+        on_change=dropdown_changed3,
+        key='dd3'
+    )
+
+    page.controls.append(dd)
+    page.controls.append(dd2)
+    page.controls.append(dd3)
+    page.update()
 
     def inicio(e=0,vitoria=False):
-            global token
-            requests.get(f'https://opentdb.com/api_token.php?command=reset&token={token}')
-            if vitoria:
-                questao_atual = ft.Text('VOCE VENCEU !!!!!!!!!!')
-            else:
-                questao_atual = ft.Text('VOCE PERDEU !!!!!!!')
-            questao_tipo = ft.Text()
-            questao_dificuldade = ft.Text()
-            questao_categoria = ft.Text()
-            questao_body = ft.Text()
-            pontuacao_txt = ft.Text()
-            erros_exibicao = ft.Text()
-            botao3 = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf)
-            botao4_ = ft.ElevatedButton("Iniciar Finito", on_click=iniciar_jogo_normal)
+        global token
+        requests.get(f'https://opentdb.com/api_token.php?command=reset&token={token}')
+        if vitoria:
+            questao_atual = ft.Text('VOCE VENCEU !!!!!!!!!!', key='questao_atual')
+        else:
+            questao_atual = ft.Text('VOCE PERDEU !!!!!!!', key='questao_atual')
+        botao3 = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf, key='botao_inicio_inf')
+        botao4_ = ft.ElevatedButton("Iniciar Finito", on_click=iniciar_jogo_normal, key='botao_inicio_fin')
 
-            a =[botao3, botao4_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao]
-            for i in a:
-                page.controls.append(i)
+        a =[dd, dd2, dd3, botao3, botao4_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao]
+        for i in a:
+            page.controls.append(i)
 
-            print("\n\n\n\n\n\nINICIO ATIVADO")
-            print(page.controls)
-            page.update()
+        print("\n\n\n\n\n\nINICIO ATIVADO")
+        print(page.controls)
+        page.update()
 
 
     def reset(e=0,vitoria=False):
@@ -120,6 +201,7 @@ def main(page: ft.Page):
         global game_mode
         global pontuacao
         global erros
+        global parametro
 
         questao_num = 0
         numero_a_exibir = 0
@@ -128,8 +210,28 @@ def main(page: ft.Page):
         pontuacao = 0
         erros = 0
         game_mode = 0
+        parametro = 'https://opentdb.com/api.php?amount=10'
+        for ctr in page.controls:
+            if 'questao_atual' in ctr.key:
+                #print(ctr.value)
+                ctr.value = ''
+                
 
         page.controls.clear()
+
+
+        # remover = []
+        # for ctr in page.controls:
+        #     print(ctr)
+        #     print(isinstance(ctr, ft.ElevatedButton))
+        #     print(isinstance(ctr, ft.Dropdown))
+        #     if 'questao_atual' not in ctr.key:
+        #         remover.append(ctr)
+        #     else:
+        #         ctr.value = ''
+
+        # for i in remover:
+        #     page.controls.remove(i)
 
         print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRESET ATIVADO')
         print(page.controls)
@@ -144,6 +246,28 @@ def main(page: ft.Page):
         global parametro
         print("DJKDSKLAJD")
         game_mode = modo
+
+        print(page.controls)
+
+        remover = []
+        for ctr in page.controls:
+            print(ctr)
+            print(isinstance(ctr, ft.ElevatedButton))
+            print(isinstance(ctr, ft.Dropdown))
+            if(isinstance(ctr, ft.ElevatedButton)):
+                if 'botao_inicio' in ctr.key:
+                    remover.append(ctr)
+            elif(isinstance(ctr, ft.Dropdown)):
+                remover.append(ctr)
+            #elif ctr.key == "texto_resultado":
+                #remover.append(ctr)
+
+        for i in remover:
+            page.controls.remove(i)
+        
+        print(page.controls)
+
+        page.update()
 
         if new_game == True or questao_num == 10:
             if questao_num ==10:
@@ -181,8 +305,13 @@ def main(page: ft.Page):
                 erros+=1
                 erros_exibicao.value += '❌'
         
+        
         global correto
-        correto.color = 'Green'
+        if correto:
+            print(f'\n\n\nCorreto: {correto}')
+            print(correto in page.controls)
+            print(f'STYLE:{correto.style}')
+        #correto.color = 'Green'
         
             
         page.update()
@@ -198,6 +327,11 @@ def main(page: ft.Page):
         global loop
         global erros
         global dados
+
+        for ctr in page.controls:
+            if ctr.key =='questao_atual':
+                questao_atual = ctr
+
         if game_mode!=0:
         #MODO NORMAL
             resultado.value = ''
@@ -206,6 +340,7 @@ def main(page: ft.Page):
                 buscar_dados(0, game_mode, False)
             elif questao_num == 10 and game_mode==2:
                 reset(0,True)
+                return
 
             if erros == 3:
                 reset()
@@ -278,24 +413,25 @@ def main(page: ft.Page):
             if unescape(data['type']) != 'boolean':
                 for resposta in wrong:
                     if i == num_rnd:
-                        botao1 = ft.ElevatedButton(right, key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right))
+                        botao1 = ft.ElevatedButton(right, color='black', key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right))
                         page.controls.append(botao1)
 
-                    botao_novo = ft.ElevatedButton(unescape(resposta), on_click=lambda e: responder(resposta,right), key=f'botao_erro1')
+                    botao_novo = ft.ElevatedButton(unescape(resposta), color='black', on_click=lambda e: responder(resposta,right), key=f'botao_erro1')
                     i+=1
                     page.controls.append(botao_novo)
 
                 if not encontrar_ctr("RESPOSTA_CORRETA"):
                         print("ADICIONADO")
-                        botao1 = ft.ElevatedButton(right, key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right))
+                        botao1 = ft.ElevatedButton(right, color='black', key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right))
                         page.controls.append(botao1)
 
             else:
-                opcoes = [ft.ElevatedButton(right, key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right)), ft.ElevatedButton(wrong, on_click=lambda e: responder(wrong,right), key=f'botao_erro1')]
+                opcoes = [ft.ElevatedButton(right, color='black', key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right)), ft.ElevatedButton(wrong, color='black', on_click=lambda e: responder(wrong,right), key=f'botao_erro1')]
                 botao_2 = opcoes.pop(randint(0,1))
                 page.controls.append(botao_2)
 
                 page.controls.append(opcoes[0])
+            encontrar_ctr("RESPOSTA_CORRETA")
 
             print(game_mode)
             questao_num+=1
@@ -312,30 +448,24 @@ def main(page: ft.Page):
                     return ctr
         return False
     
-    def encontrar_ctr2(name):
+    def trocar_cores(key):
+        for ctr in page.controls:
+            if(isinstance(ctr, ft.ElevatedButton)):
+                if(ctr.key) == key:
+                    global correto
+                    correto = ctr
+                    return ctr
+        return False
+    
+    def encontrar_id_categoria(name):
         global categoria_selecionada
         for i in categorias:
             if i['name'] == name:
                 return i['id']
     
-    botao = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf)
-    botao_ = ft.ElevatedButton("Iniciar Finito", on_click=iniciar_jogo_normal)
+    botao = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf, key='botao_inicio_inf')
+    botao_ = ft.ElevatedButton("Iniciar Finito", on_click=iniciar_jogo_normal, key='botao_inicio_fin')
 
     page.add(botao, botao_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao)
 
 ft.app(main)
-
-
-#EXEMPLO API COM TODOS PARAMETROS :
-#https://opentdb.com/api.php?amount=10&category=27&difficulty=easy&type=multiple
-
-# ESTRUTURA DO PEDIDO:
-# https://opentdb.com/api.php?amount=10
-# +
-# amount=10
-# +
-# &category=num
-# +
-# &difficulty=(easy / medium / hard)
-# +
-# &type(multiple / boolean)
