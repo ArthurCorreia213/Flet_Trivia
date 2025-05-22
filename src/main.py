@@ -2,6 +2,7 @@ import flet as ft
 import requests
 from html import unescape
 from random import randint
+import sqlite3
 
 token = ''
 parametro = 'https://opentdb.com/api.php?amount=10'
@@ -24,10 +25,17 @@ game_mode = 0
 #GAME MODE 1 = INFINITO
 #GAME MODE 2 = 10 perguntas
 
+cursor = ''
+
 def main(page: ft.Page):
     global pontuacao
     global token
+    global cursor
 
+    con = sqlite3.connect('tutorial.db')
+    cur = con.cursor()
+    cursor = cur
+    
     questao_atual = ft.Text(key='questao_atual')
     questao_tipo = ft.Text(key='questao_atual1')
     questao_dificuldade = ft.Text(key='questao_atual2')
@@ -64,6 +72,7 @@ def main(page: ft.Page):
         
         parametro+=token
         questao_atual.value = ''
+        questao_tipo.value = ''
         print(parametro)
         buscar_dados(0, 1)
 
@@ -78,28 +87,29 @@ def main(page: ft.Page):
                 print(categoria_selecionada)
                 parametro +=f'&category={categoria_selecionada}'
         if dificuldade:
-            if dificuldade != 'Qualquer':
+            if dificuldade != 'Qualquer Dificuldade':
                 print(dificuldade)
                 parametro+=f'&difficulty={dificuldade}'
         if tipo_de_pergunta:
-            if tipo_de_pergunta != 'Qualquer':
+            if tipo_de_pergunta != 'Qualquer Tipo':
                 print(tipo_de_pergunta)
                 parametro+=f'&type={tipo_de_pergunta}'
         
         parametro+=token
         questao_atual.value = ''
+        questao_tipo.value = ''
         print(parametro)
         buscar_dados(0, 2)
 
     opcoes_tipos = []
 
-    opcoes_tipos.append(ft.DropdownOption(key='Qualquer', content=ft.Text(value='Qualquer tipo')))
+    opcoes_tipos.append(ft.DropdownOption(key='Qualquer Tipo', content=ft.Text(value='Qualquer tipo')))
     opcoes_tipos.append(ft.DropdownOption(key='boolean', content=ft.Text(value='Verdadeiro ou Falso')))
     opcoes_tipos.append(ft.DropdownOption(key='multiple', content=ft.Text(value='Múltipla escolha')))
 
     dificuldades = []
 
-    dificuldades.append(ft.DropdownOption(key='Qualquer', content=ft.Text(value='Qualquer dificuldade')))
+    dificuldades.append(ft.DropdownOption(key='Qualquer Dificuldade', content=ft.Text(value='Qualquer dificuldade')))
     dificuldades.append(ft.DropdownOption(key='easy', content=ft.Text(value='Fácil')))
     dificuldades.append(ft.DropdownOption(key='medium', content=ft.Text(value='Médio')))
     dificuldades.append(ft.DropdownOption(key='hard', content=ft.Text(value='Difícil')))
@@ -175,11 +185,23 @@ def main(page: ft.Page):
 
     def inicio(e=0,vitoria=False):
         global token
+        global game_mode
         requests.get(f'https://opentdb.com/api_token.php?command=reset&token={token}')
         if vitoria:
             questao_atual = ft.Text('VOCE VENCEU !!!!!!!!!!', key='questao_atual')
         else:
             questao_atual = ft.Text('VOCE PERDEU !!!!!!!', key='questao_atual')
+
+        
+        if game_mode == 2:
+            scoreboard = cursor.execute("SELECT nome, pontuacao FROM recordes_fin ORDER BY pontuacao DESC LIMIT 5")
+            lst_scoreboard = scoreboard.fetchall()
+            questao_tipo = ft.Text(str(lst_scoreboard), key='questao_atual1')
+        elif game_mode == 1:
+            scoreboard = cursor.execute("SELECT nome, pontuacao FROM recordes_inf ORDER BY pontuacao DESC LIMIT 5")
+            lst_scoreboard = scoreboard.fetchall()
+            questao_tipo = ft.Text(str(lst_scoreboard), key='questao_atual1')
+        game_mode = 0
         botao3 = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf, key='botao_inicio_inf')
         botao4_ = ft.ElevatedButton("Iniciar Finito", on_click=iniciar_jogo_normal, key='botao_inicio_fin')
 
@@ -198,7 +220,6 @@ def main(page: ft.Page):
         global dados
         global numero_a_exibir
         global loop
-        global game_mode
         global pontuacao
         global erros
         global parametro
@@ -209,7 +230,6 @@ def main(page: ft.Page):
         loop = 0
         pontuacao = 0
         erros = 0
-        game_mode = 0
         parametro = 'https://opentdb.com/api.php?amount=10'
         for ctr in page.controls:
             if 'questao_atual' in ctr.key:
@@ -331,6 +351,8 @@ def main(page: ft.Page):
         for ctr in page.controls:
             if ctr.key =='questao_atual':
                 questao_atual = ctr
+            if ctr.key =='questao_atual1':
+                questao_tipo = ctr
 
         if game_mode!=0:
         #MODO NORMAL
@@ -343,6 +365,15 @@ def main(page: ft.Page):
                 return
 
             if erros == 3:
+                global pontuacao
+                dados = ['ART', pontuacao]
+                if game_mode == 2:
+                    cursor.execute("INSERT INTO recordes_fin VALUES (?, ?)", dados)
+                    con.commit()
+                elif game_mode == 1:
+                    cursor.execute("INSERT INTO recordes_inf VALUES (?, ?)", dados)
+                    con.commit()
+                    
                 reset()
                 return
             
