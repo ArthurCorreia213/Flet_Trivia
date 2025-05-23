@@ -4,10 +4,12 @@ from html import unescape
 from random import randint
 import sqlite3
 
+#Parametro de requisição da API de perguntas; 
+#Token é gerado automaticamente ao iniciar o jogo
 token = ''
 parametro = 'https://opentdb.com/api.php?amount=10'
-reset = f'https://opentdb.com/api_token.php?command=reset&token=token'
 
+#Configurações iniciais
 questao_num = 0
 numero_a_exibir = 0
 dados = []
@@ -57,6 +59,8 @@ def main(page: ft.Page):
         global tipo_de_pergunta
         global parametro
         global token
+
+        #Procura as opções selecionadas pelo jogador e as adiciona ao parametro de requisição
         if categoria_selecionada:
             if categoria_selecionada != 'Qualquer':
                 print(categoria_selecionada)
@@ -70,12 +74,15 @@ def main(page: ft.Page):
                 print(tipo_de_pergunta)
                 parametro+=f'&type={tipo_de_pergunta}'
         
+        #Adiciona o token a requisição e limpa as campos de questao atual e tipo
         parametro+=token
         questao_atual.value = ''
         questao_tipo.value = ''
         print(parametro)
         buscar_dados(0, 1)
 
+    #Duas versões da mesma função porém com game_mode diferente
+    #Isso foi feito para conseguir rodar essas funções em uma função lambda sem parametros
     def iniciar_jogo_normal(e):
         global categoria_selecionada
         global dificuldade
@@ -101,6 +108,8 @@ def main(page: ft.Page):
         print(parametro)
         buscar_dados(0, 2)
 
+
+    #Configuração dos Dropdowns
     opcoes_tipos = []
 
     opcoes_tipos.append(ft.DropdownOption(key='Qualquer Tipo', content=ft.Text(value='Qualquer tipo')))
@@ -184,23 +193,37 @@ def main(page: ft.Page):
     page.update()
 
     def inicio(e=0,vitoria=False):
+        #Função que recria a tela inicial do jogo ao ganhar/perder e exibe uma mensagem e leaderboard
         global token
         global game_mode
+        #Reseta o token para que as perguntas sejam resetadas
         requests.get(f'https://opentdb.com/api_token.php?command=reset&token={token}')
         if vitoria:
             questao_atual = ft.Text('VOCE VENCEU !!!!!!!!!!', key='questao_atual')
         else:
             questao_atual = ft.Text('VOCE PERDEU !!!!!!!', key='questao_atual')
 
-        
+        #Busca leaderboard do banco de dados do modo de jogo selecionado
         if game_mode == 2:
             scoreboard = cursor.execute("SELECT nome, pontuacao FROM recordes_fin ORDER BY pontuacao DESC LIMIT 5")
-            lst_scoreboard = scoreboard.fetchall()
-            questao_tipo = ft.Text(str(lst_scoreboard), key='questao_atual1')
+            #lst_scoreboard = scoreboard.fetchall()
+            #questao_tipo = ft.Text(str(lst_scoreboard), key='questao_atual1')
+            questao_tipo = ft.Text("Pontuação           Nome\n\n", key='questao_atual1')
+            for row in scoreboard:
+                print(row)
+                nome, pont = row
+                print(pont,nome)
+                questao_tipo.value+=f"      {pont}                     {nome}\n\n"
         elif game_mode == 1:
             scoreboard = cursor.execute("SELECT nome, pontuacao FROM recordes_inf ORDER BY pontuacao DESC LIMIT 5")
-            lst_scoreboard = scoreboard.fetchall()
-            questao_tipo = ft.Text(str(lst_scoreboard), key='questao_atual1')
+            #lst_scoreboard = scoreboard.fetchall()
+            #questao_tipo = ft.Text('str(lst_scoreboard)', key='questao_atual1')
+            questao_tipo = ft.Text("Pontuação           Nome\n\n", key='questao_atual1')
+            for row in scoreboard:
+                print(row)
+                nome, pont = row
+                print(pont,nome)
+                questao_tipo.value+=f"      {pont}                     {nome}\n\n"
         game_mode = 0
         botao3 = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf, key='botao_inicio_inf')
         botao4_ = ft.ElevatedButton("Iniciar Finito", on_click=iniciar_jogo_normal, key='botao_inicio_fin')
@@ -215,6 +238,7 @@ def main(page: ft.Page):
 
 
     def reset(e=0,vitoria=False):
+        #Reseta todos os padroes aos iniciais e apaga todos elementos da tela
         print("EJWQOEWIQJEOWQEIJWQOIE")
         global questao_num
         global dados
@@ -258,6 +282,7 @@ def main(page: ft.Page):
         inicio(0,vitoria)
 
     def buscar_dados(e, modo=game_mode, new_game=True):
+        #Usa os parametros definidos anteriormente para fazer o request de perguntas e retorna-las
         global questao_num
         global dados
         global numero_a_exibir
@@ -342,6 +367,9 @@ def main(page: ft.Page):
     #def next():
 
     def game_loop(game_mode):
+        #Loop de gameplay do jogo
+        #Pega as perguntas do request e as traduz
+        #Exibe as perguntas, cria os botões de resposta, tudo traduzido
         global questao_num
         global numero_a_exibir
         global loop
@@ -384,6 +412,9 @@ def main(page: ft.Page):
             respostas = [unescape(x) for x in data['incorrect_answers']]
             respostas.append(unescape(data['correct_answer']))
             respostas_str = ''
+
+            #Junta a pegunta e opções para criar uma unica frase com todos elementos permitindo fazer toda a tradução com uma unica query/request
+            #Separa a pergunta e opções com um / para evitar erro em separações com virgula
             for x in respostas:
                 respostas_str+=x+'/ '
             print((respostas_str+unescape(data['question'])).split('/ '))
