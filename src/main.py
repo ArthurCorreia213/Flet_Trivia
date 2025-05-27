@@ -48,6 +48,9 @@ def main(page: ft.Page):
 
     resultado = ft.Text(key="texto_resultado")
 
+    nome_input = ft.TextField(label="Seu nome (até 3 letras)", max_length=3, width=150, key="input_nome")
+
+
     global token
     token_req = requests.get('https://opentdb.com/api_token.php?command=request')
     print(token_req.json()['token'])
@@ -228,7 +231,7 @@ def main(page: ft.Page):
         botao3 = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf, key='botao_inicio_inf')
         botao4_ = ft.ElevatedButton("Iniciar Finito", on_click=iniciar_jogo_normal, key='botao_inicio_fin')
 
-        a =[dd, dd2, dd3, botao3, botao4_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao]
+        a =[dd, dd2, dd3, nome_input, botao3, botao4_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao]
         for i in a:
             page.controls.append(i)
 
@@ -304,6 +307,8 @@ def main(page: ft.Page):
                     remover.append(ctr)
             elif(isinstance(ctr, ft.Dropdown)):
                 remover.append(ctr)
+            elif(isinstance(ctr, ft.TextField)):
+                remover.append(ctr)
             #elif ctr.key == "texto_resultado":
                 #remover.append(ctr)
 
@@ -375,6 +380,7 @@ def main(page: ft.Page):
         global loop
         global erros
         global dados
+        global pontuacao
 
         for ctr in page.controls:
             if ctr.key =='questao_atual':
@@ -389,19 +395,36 @@ def main(page: ft.Page):
             if questao_num == 10 and game_mode==1:
                 buscar_dados(0, game_mode, False)
             elif questao_num == 10 and game_mode==2:
+                nome = encontrar_ctr("input_nome").value.strip().upper()
+                if not nome:
+                    nome = "???"
+                elif len(nome) > 3:
+                    nome = nome[:3]
+                dados_bd = [nome, pontuacao]
+
+                if game_mode == 2:
+                    cursor.execute("INSERT INTO recordes_fin VALUES (?, ?)", dados_bd)
+                    con.commit()
+                elif game_mode == 1:
+                    cursor.execute("INSERT INTO recordes_inf VALUES (?, ?)", dados_bd)
+                    con.commit()
                 reset(0,True)
                 return
 
             if erros == 3:
-                global pontuacao
-                dados = ['ART', pontuacao]
+                nome = encontrar_ctr("input_nome").value.strip().upper()
+                if not nome:
+                    nome = "???"
+                elif len(nome) > 3:
+                    nome = nome[:3]
+                dados_bd = [nome, pontuacao]
+
                 if game_mode == 2:
-                    cursor.execute("INSERT INTO recordes_fin VALUES (?, ?)", dados)
+                    cursor.execute("INSERT INTO recordes_fin VALUES (?, ?)", dados_bd)
                     con.commit()
                 elif game_mode == 1:
-                    cursor.execute("INSERT INTO recordes_inf VALUES (?, ?)", dados)
+                    cursor.execute("INSERT INTO recordes_inf VALUES (?, ?)", dados_bd)
                     con.commit()
-                    
                 reset()
                 return
             
@@ -475,20 +498,20 @@ def main(page: ft.Page):
             if unescape(data['type']) != 'boolean':
                 for resposta in wrong:
                     if i == num_rnd:
-                        botao1 = ft.ElevatedButton(right, color='black', key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right))
+                        botao1 = ft.ElevatedButton(right, key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right))
                         page.controls.append(botao1)
 
-                    botao_novo = ft.ElevatedButton(unescape(resposta), color='black', on_click=lambda e: responder(resposta,right), key=f'botao_erro1')
+                    botao_novo = ft.ElevatedButton(unescape(resposta), on_click=lambda e: responder(resposta,right), key=f'botao_erro1')
                     i+=1
                     page.controls.append(botao_novo)
 
                 if not encontrar_ctr("RESPOSTA_CORRETA"):
                         print("ADICIONADO")
-                        botao1 = ft.ElevatedButton(right, color='black', key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right))
+                        botao1 = ft.ElevatedButton(right, key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right))
                         page.controls.append(botao1)
 
             else:
-                opcoes = [ft.ElevatedButton(right, color='black', key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right)), ft.ElevatedButton(wrong, color='black', on_click=lambda e: responder(wrong,right), key=f'botao_erro1')]
+                opcoes = [ft.ElevatedButton(right, key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right)), ft.ElevatedButton(wrong, on_click=lambda e: responder(wrong,right), key=f'botao_erro1')]
                 botao_2 = opcoes.pop(randint(0,1))
                 page.controls.append(botao_2)
 
@@ -503,10 +526,17 @@ def main(page: ft.Page):
 
     def encontrar_ctr(key):
         for ctr in page.controls:
+            print(ctr)
+            print(isinstance(ctr, ft.TextField),"HAKLJSVSFNLNVJHVNJAFHSKJFNHKLSAHFJN")
             if(isinstance(ctr, ft.ElevatedButton)):
                 if(ctr.key) == key:
                     global correto
                     correto = ctr
+                    return ctr
+            elif(isinstance(ctr, ft.TextField)):
+                print("TEXTFIELD                   !!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                print(ctr.key == key, "==========================================================")
+                if ctr.key == key:
                     return ctr
         return False
     
@@ -528,6 +558,6 @@ def main(page: ft.Page):
     botao = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf, key='botao_inicio_inf')
     botao_ = ft.ElevatedButton("Iniciar Finito", on_click=iniciar_jogo_normal, key='botao_inicio_fin')
 
-    page.add(botao, botao_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao)
+    page.add(nome_input, botao, botao_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao)
 
 ft.app(main)
