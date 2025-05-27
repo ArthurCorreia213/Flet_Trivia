@@ -9,7 +9,8 @@
 ## Ferramentas utilizadas
 
 + Flet - GUI e lógica
-+ Open Trivia Database (opentdb.com) - Banco de Dados de perguntas e API 
++ Open Trivia Database (opentdb.com) - Banco de Dados de perguntas e API
++ LibreTranslate - API de tradução 
 + SQLite - Armazenamento de placar
 
 ## Como executar:
