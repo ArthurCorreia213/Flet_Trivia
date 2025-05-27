@@ -54,7 +54,6 @@ def main(page: ft.Page):
 
     global token
     token_req = requests.get('https://opentdb.com/api_token.php?command=request')
-    print(token_req.json()['token'])
     token = f"&token={token_req.json()['token']}"
 
     def iniciar_jogo_inf(e):
@@ -68,15 +67,12 @@ def main(page: ft.Page):
         #Procura as opções selecionadas pelo jogador e as adiciona ao parametro de requisição
         if categoria_selecionada:
             if categoria_selecionada != 'Qualquer':
-                print(categoria_selecionada)
                 parametro +=f'&category={categoria_selecionada}'
         if dificuldade:
             if dificuldade != 'Qualquer dificuldade':
-                print(dificuldade)
                 parametro+=f'&difficulty={dificuldade}'
         if tipo_de_pergunta:
             if tipo_de_pergunta != 'Qualquer tipo':
-                print(tipo_de_pergunta)
                 parametro+=f'&type={tipo_de_pergunta}'
 
         nome = encontrar_ctr("input_nome").value
@@ -85,7 +81,6 @@ def main(page: ft.Page):
         parametro+=token
         questao_atual.value = ''
         questao_tipo.value = ''
-        print(parametro)
         buscar_dados(0, 1)
 
     #Duas versões da mesma função porém com game_mode diferente
@@ -99,15 +94,12 @@ def main(page: ft.Page):
         global nome
         if categoria_selecionada:
             if categoria_selecionada != 'Qualquer':
-                print(categoria_selecionada)
                 parametro +=f'&category={categoria_selecionada}'
         if dificuldade:
             if dificuldade != 'Qualquer Dificuldade':
-                print(dificuldade)
                 parametro+=f'&difficulty={dificuldade}'
         if tipo_de_pergunta:
             if tipo_de_pergunta != 'Qualquer Tipo':
-                print(tipo_de_pergunta)
                 parametro+=f'&type={tipo_de_pergunta}'
 
         campo_nome = encontrar_ctr("input_nome")
@@ -119,7 +111,6 @@ def main(page: ft.Page):
         parametro+=token
         questao_atual.value = ''
         questao_tipo.value = ''
-        print(parametro)
         buscar_dados(0, 2)
 
 
@@ -155,24 +146,18 @@ def main(page: ft.Page):
 
     def dropdown_changed(e):
         e.control.color = e.control.data
-        # print(encontrar_ctr2(e.control.value))
-        # print(page.controls[0])
         global categoria_selecionada
         categoria_selecionada = encontrar_id_categoria(page.controls[0].value)
         page.update()
 
     def dropdown_changed2(e):
         e.control.color = e.control.data
-        # print(encontrar_ctr2(e.control.value))
-        # print(page.controls[0])
         global dificuldade
         dificuldade = page.controls[1].value
         page.update()
 
     def dropdown_changed3(e):
         e.control.color = e.control.data
-        # print(encontrar_ctr2(e.control.value))
-        # print(page.controls[0])
         global tipo_de_pergunta
         tipo_de_pergunta = page.controls[2].value
         page.update()
@@ -224,9 +209,7 @@ def main(page: ft.Page):
             #questao_tipo = ft.Text(str(lst_scoreboard), key='questao_atual1')
             questao_tipo = ft.Text("Pontuação           Nome\n\n", key='questao_atual1')
             for row in scoreboard:
-                print(row)
                 nome, pont = row
-                print(pont,nome)
                 questao_tipo.value+=f"      {pont}                     {nome}\n\n"
         elif game_mode == 1:
             scoreboard = cursor.execute("SELECT nome, pontuacao FROM recordes_inf ORDER BY pontuacao DESC LIMIT 5")
@@ -234,9 +217,7 @@ def main(page: ft.Page):
             #questao_tipo = ft.Text('str(lst_scoreboard)', key='questao_atual1')
             questao_tipo = ft.Text("Pontuação           Nome\n\n", key='questao_atual1')
             for row in scoreboard:
-                print(row)
                 nome, pont = row
-                print(pont,nome)
                 questao_tipo.value+=f"      {pont}                     {nome}\n\n"
         game_mode = 0
         botao3 = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf, key='botao_inicio_inf')
@@ -246,14 +227,13 @@ def main(page: ft.Page):
         for i in a:
             page.controls.append(i)
 
-        print("\n\n\n\n\n\nINICIO ATIVADO")
-        print(page.controls)
+        # print("\n\n\n\n\n\nINICIO ATIVADO")
+        # print(page.controls)
         page.update()
 
 
     def reset(e=0,vitoria=False):
         #Reseta todos os padroes aos iniciais e apaga todos elementos da tela
-        print("EJWQOEWIQJEOWQEIJWQOIE")
         global questao_num
         global dados
         global numero_a_exibir
@@ -291,8 +271,8 @@ def main(page: ft.Page):
         # for i in remover:
         #     page.controls.remove(i)
 
-        print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRESET ATIVADO')
-        print(page.controls)
+        # print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRESET ATIVADO')
+        # print(page.controls)
         inicio(0,vitoria)
 
     def buscar_dados(e, modo=game_mode, new_game=True):
@@ -303,16 +283,10 @@ def main(page: ft.Page):
         global loop
         global game_mode
         global parametro
-        print("DJKDSKLAJD")
         game_mode = modo
-
-        print(page.controls)
 
         remover = []
         for ctr in page.controls:
-            print(ctr)
-            print(isinstance(ctr, ft.ElevatedButton))
-            print(isinstance(ctr, ft.Dropdown))
             if(isinstance(ctr, ft.ElevatedButton)):
                 if 'botao_inicio' in ctr.key:
                     remover.append(ctr)
@@ -325,8 +299,6 @@ def main(page: ft.Page):
 
         for i in remover:
             page.controls.remove(i)
-        
-        print(page.controls)
 
         page.update()
 
@@ -334,7 +306,7 @@ def main(page: ft.Page):
             if questao_num ==10:
                 loop+=1
             response = requests.get(parametro)
-            print(len(response.json()['results']))
+            #print(len(response.json()['results']))
             questao_num = 0
             dados = response.json()['results']
         else:
@@ -343,7 +315,6 @@ def main(page: ft.Page):
         if response.status_code == 200:
             if response.json()['response_code'] == 0:
                 game_loop(game_mode)
-
         else:
             resultado.value = "Erro"
             print("ERRO")
@@ -365,16 +336,7 @@ def main(page: ft.Page):
             else:
                 erros+=1
                 erros_exibicao.value += '❌'
-        
-        
-        global correto
-        if correto:
-            print(f'\n\n\nCorreto: {correto}')
-            print(correto in page.controls)
-            print(f'STYLE:{correto.style}')
-        #correto.color = 'Green'
-        
-            
+               
         page.update()
         global game_mode
         game_loop(game_mode)
@@ -441,7 +403,7 @@ def main(page: ft.Page):
 
             response = dados
             data = response[questao_num-1]
-            print(data)
+            #print(data)
             respostas = [unescape(x) for x in data['incorrect_answers']]
             respostas.append(unescape(data['correct_answer']))
             respostas_str = ''
@@ -450,7 +412,9 @@ def main(page: ft.Page):
             #Separa a pergunta e opções com um / para evitar erro em separações com virgula
             for x in respostas:
                 respostas_str+=x+'/ '
-            print((respostas_str+unescape(data['question'])).split('/ '))
+
+            q = (respostas_str+unescape(data['question'])).split('/ ')
+
             try:
                 lbt_response = requests.post(
                         "http://localhost:5000/translate",
@@ -479,17 +443,27 @@ def main(page: ft.Page):
                         question = ' '.join(traducao[4:])
 
                     questao_body.value = question
-                    print(traducao)
+                    #print(traducao)
                 else:
-                    print(unescape(data['question']))
                     print("ERRO AO TRADUZIR")
-                    print(lbt_response.text)
+                    #print(lbt_response.text)
 
             except Exception as e:
                 print(e)
                 print("ERRO NA REQUISIÇÃO")
-                questao_body.value = unescape(data['question'])
 
+                traducao = q
+
+                if unescape(data['type'])== 'boolean':
+                    wrong = traducao[0]
+                    right = traducao[1] 
+                    question = ' '.join(traducao[2:])
+                else:
+                    wrong = traducao[:3]
+                    right = traducao[3]
+                    question = ' '.join(traducao[4:])
+
+                questao_body.value = question
             
             questao_tipo.value = unescape(data['type'])
             questao_dificuldade.value = unescape(data['difficulty'])
@@ -516,7 +490,6 @@ def main(page: ft.Page):
                     page.controls.append(botao_novo)
 
                 if not encontrar_ctr("RESPOSTA_CORRETA"):
-                        print("ADICIONADO")
                         botao1 = ft.ElevatedButton(right, key="RESPOSTA_CORRETA", on_click=lambda e: responder(right,right))
                         page.controls.append(botao1)
 
@@ -528,7 +501,6 @@ def main(page: ft.Page):
                 page.controls.append(opcoes[0])
             encontrar_ctr("RESPOSTA_CORRETA")
 
-            print(game_mode)
             questao_num+=1
             numero_a_exibir = questao_num + loop*10
             questao_atual.value = f"Questão {numero_a_exibir}"
@@ -536,26 +508,14 @@ def main(page: ft.Page):
 
     def encontrar_ctr(key):
         for ctr in page.controls:
-            print(ctr)
-            print(isinstance(ctr, ft.TextField),"HAKLJSVSFNLNVJHVNJAFHSKJFNHKLSAHFJN")
             if(isinstance(ctr, ft.ElevatedButton)):
                 if(ctr.key) == key:
                     global correto
                     correto = ctr
                     return ctr
+                
             elif(isinstance(ctr, ft.TextField)):
-                print("TEXTFIELD                   !!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                print(ctr.key == key, "==========================================================")
                 if ctr.key == key:
-                    return ctr
-        return False
-    
-    def trocar_cores(key):
-        for ctr in page.controls:
-            if(isinstance(ctr, ft.ElevatedButton)):
-                if(ctr.key) == key:
-                    global correto
-                    correto = ctr
                     return ctr
         return False
     

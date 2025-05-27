@@ -1,29 +1,54 @@
 # Jogo de Trivia feito em Flet
 
+- Mais de 5000 perguntas
+- Tradução em pt-BR 
+- Modo tradicional com 10 perguntas
+- Modo infinito
+- Placar com as melhores pontuações registradas
+
+## Ferramentas utilizadas
+
++ Flet - GUI e lógica
++ Open Trivia Database (opentdb.com) - Banco de Dados de perguntas e API 
++ SQLite - Armazenamento de placar
+
 ## Como executar:
+
+### Requisitos:
+
++ Python 3.10+
++ Git
 
 1. Clone o Repositorio
 ```
-git clone 'https://github.com/ArthurCorreia213/Flet_Trivia'
-cd Flet_Trivia
+git clone 'https://github.com/ArthurCorreia213/Flet_Trivia' &
+cd Flet_Trivia &
 python -m venv .venv
+```
+2. Execute o ambiente virtual (opcional)
+```
 .venv\Scripts\activate
 ```
-2. Instale os requisitos
+3. Instale os requisitos
 ```
 pip install -r requirements.txt
 ```
-3. Inicialize o servidor de tradução
-### Se é sua primeira vez rodando o programa:
-```
-libretranslate --port 5000
-```
-### Se você ja instalou os pacotes de tradução antes:
+4. Inicialize o servidor de tradução (opcional)
+
 ```
 libretranslate --load-only en,pt-BR --port 5000
 ```
+
+Em caso de erro pode ser necessário baixar todas linguagens
+Para isso:
+```
+libretranslate --port 5000
+```
+
+Se você ja instalou os pacotes de tradução antes:
 ### PS: O servidor de tradução deve ficar aberto para a aplicação funcionar
-4. Rode a aplicação Flet
+
+5. Rode a aplicação Flet
 ```
 flet run
 ```
