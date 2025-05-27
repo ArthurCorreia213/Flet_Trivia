@@ -45,9 +45,6 @@ Para isso:
 libretranslate --port 5000
 ```
 
-Se você ja instalou os pacotes de tradução antes:
-### PS: O servidor de tradução deve ficar aberto para a aplicação funcionar
-
 5. Rode a aplicação Flet
 ```
 flet run
