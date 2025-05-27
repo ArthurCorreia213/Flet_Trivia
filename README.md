@@ -1,81 +1,29 @@
-# FletApp app
+# Jogo de Trivia feito em Flet
 
-## Run the app
+## Como executar:
 
-### uv
-
-Run as a desktop app:
-
+1. Clone o Repositorio
 ```
-uv run flet run
+git clone 'https://github.com/ArthurCorreia213/Flet_Trivia'
+cd Flet_Trivia
+python -m venv .venv
+.venv\Scripts\activate
 ```
-
-Run as a web app:
-
+2. Instale os requisitos
 ```
-uv run flet run --web
+pip install -r requirements.txt
 ```
-
-### Poetry
-
-Install dependencies from `pyproject.toml`:
-
+3. Inicialize o servidor de tradução
+### Se é sua primeira vez rodando o programa:
 ```
-poetry install
+libretranslate --port 5000
 ```
-
-Run as a desktop app:
-
+### Se você ja instalou os pacotes de tradução antes:
 ```
-poetry run flet run
+libretranslate --load-only en,pt-BR --port 5000
 ```
-
-Run as a web app:
-
+### PS: O servidor de tradução deve ficar aberto para a aplicação funcionar
+4. Rode a aplicação Flet
 ```
-poetry run flet run --web
+flet run
 ```
-
-For more details on running the app, refer to the [Getting Started Guide](https://flet.dev/docs/getting-started/).
-
-## Build the app
-
-### Android
-
-```
-flet build apk -v
-```
-
-For more details on building and signing `.apk` or `.aab`, refer to the [Android Packaging Guide](https://flet.dev/docs/publish/android/).
-
-### iOS
-
-```
-flet build ipa -v
-```
-
-For more details on building and signing `.ipa`, refer to the [iOS Packaging Guide](https://flet.dev/docs/publish/ios/).
-
-### macOS
-
-```
-flet build macos -v
-```
-
-For more details on building macOS package, refer to the [macOS Packaging Guide](https://flet.dev/docs/publish/macos/).
-
-### Linux
-
-```
-flet build linux -v
-```
-
-For more details on building Linux package, refer to the [Linux Packaging Guide](https://flet.dev/docs/publish/linux/).
-
-### Windows
-
-```
-flet build windows -v
-```
-
-For more details on building Windows package, refer to the [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).

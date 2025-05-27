@@ -16,6 +16,7 @@ dados = []
 loop = 0
 pontuacao = 0
 erros = 0
+nome = ''
 
 correto = ''
 
@@ -34,7 +35,7 @@ def main(page: ft.Page):
     global token
     global cursor
 
-    con = sqlite3.connect('tutorial.db')
+    con = sqlite3.connect('trivia.db')
     cur = con.cursor()
     cursor = cur
     
@@ -62,6 +63,7 @@ def main(page: ft.Page):
         global tipo_de_pergunta
         global parametro
         global token
+        global nome
 
         #Procura as opções selecionadas pelo jogador e as adiciona ao parametro de requisição
         if categoria_selecionada:
@@ -76,6 +78,8 @@ def main(page: ft.Page):
             if tipo_de_pergunta != 'Qualquer tipo':
                 print(tipo_de_pergunta)
                 parametro+=f'&type={tipo_de_pergunta}'
+
+        nome = encontrar_ctr("input_nome").value
         
         #Adiciona o token a requisição e limpa as campos de questao atual e tipo
         parametro+=token
@@ -92,6 +96,7 @@ def main(page: ft.Page):
         global tipo_de_pergunta
         global parametro
         global token
+        global nome
         if categoria_selecionada:
             if categoria_selecionada != 'Qualquer':
                 print(categoria_selecionada)
@@ -104,6 +109,12 @@ def main(page: ft.Page):
             if tipo_de_pergunta != 'Qualquer Tipo':
                 print(tipo_de_pergunta)
                 parametro+=f'&type={tipo_de_pergunta}'
+
+        campo_nome = encontrar_ctr("input_nome")
+        if campo_nome.value:
+            nome = campo_nome.value
+        else:
+            nome = '???'
         
         parametro+=token
         questao_atual.value = ''
@@ -381,6 +392,7 @@ def main(page: ft.Page):
         global erros
         global dados
         global pontuacao
+        global nome
 
         for ctr in page.controls:
             if ctr.key =='questao_atual':
@@ -392,10 +404,9 @@ def main(page: ft.Page):
         #MODO NORMAL
             resultado.value = ''
 
-            if questao_num == 10 and game_mode==1:
+            if questao_num == 11 and game_mode==1:
                 buscar_dados(0, game_mode, False)
             elif questao_num == 10 and game_mode==2:
-                nome = encontrar_ctr("input_nome").value.strip().upper()
                 if not nome:
                     nome = "???"
                 elif len(nome) > 3:
@@ -412,7 +423,6 @@ def main(page: ft.Page):
                 return
 
             if erros == 3:
-                nome = encontrar_ctr("input_nome").value.strip().upper()
                 if not nome:
                     nome = "???"
                 elif len(nome) > 3:
