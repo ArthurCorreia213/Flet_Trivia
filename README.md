@@ -1,6 +1,6 @@
 # Jogo de Trivia feito em Flet
 
-- Mais de 5000 perguntas
+- Mais de 4000 perguntas
 - Tradução em pt-BR 
 - Modo tradicional com 10 perguntas
 - Modo infinito
