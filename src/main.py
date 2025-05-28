@@ -51,69 +51,6 @@ def main(page: ft.Page):
 
     nome_input = ft.TextField(label="Seu nome (até 3 letras)", max_length=3, width=150, key="input_nome")
 
-
-    global token
-    token_req = requests.get('https://opentdb.com/api_token.php?command=request')
-    token = f"&token={token_req.json()['token']}"
-
-    def iniciar_jogo_inf(e):
-        global categoria_selecionada
-        global dificuldade
-        global tipo_de_pergunta
-        global parametro
-        global token
-        global nome
-
-        #Procura as opções selecionadas pelo jogador e as adiciona ao parametro de requisição
-        if categoria_selecionada:
-            if categoria_selecionada != 'Qualquer':
-                parametro +=f'&category={categoria_selecionada}'
-        if dificuldade:
-            if dificuldade != 'Qualquer dificuldade':
-                parametro+=f'&difficulty={dificuldade}'
-        if tipo_de_pergunta:
-            if tipo_de_pergunta != 'Qualquer tipo':
-                parametro+=f'&type={tipo_de_pergunta}'
-
-        nome = encontrar_ctr("input_nome").value
-        
-        #Adiciona o token a requisição e limpa as campos de questao atual e tipo
-        parametro+=token
-        questao_atual.value = ''
-        questao_tipo.value = ''
-        buscar_dados(0, 1)
-
-    #Duas versões da mesma função porém com game_mode diferente
-    #Isso foi feito para conseguir rodar essas funções em uma função lambda sem parametros
-    def iniciar_jogo_normal(e):
-        global categoria_selecionada
-        global dificuldade
-        global tipo_de_pergunta
-        global parametro
-        global token
-        global nome
-        if categoria_selecionada:
-            if categoria_selecionada != 'Qualquer':
-                parametro +=f'&category={categoria_selecionada}'
-        if dificuldade:
-            if dificuldade != 'Qualquer Dificuldade':
-                parametro+=f'&difficulty={dificuldade}'
-        if tipo_de_pergunta:
-            if tipo_de_pergunta != 'Qualquer Tipo':
-                parametro+=f'&type={tipo_de_pergunta}'
-
-        campo_nome = encontrar_ctr("input_nome")
-        if campo_nome.value:
-            nome = campo_nome.value
-        else:
-            nome = '???'
-        
-        parametro+=token
-        questao_atual.value = ''
-        questao_tipo.value = ''
-        buscar_dados(0, 2)
-
-
     #Configuração dos Dropdowns
     opcoes_tipos = []
 
@@ -190,6 +127,67 @@ def main(page: ft.Page):
     page.controls.append(dd2)
     page.controls.append(dd3)
     page.update()
+
+    global token
+    token_req = requests.get('https://opentdb.com/api_token.php?command=request')
+    token = f"&token={token_req.json()['token']}"
+
+    def iniciar_jogo_inf(e):
+        global categoria_selecionada
+        global dificuldade
+        global tipo_de_pergunta
+        global parametro
+        global token
+        global nome
+
+        #Procura as opções selecionadas pelo jogador e as adiciona ao parametro de requisição
+        if categoria_selecionada:
+            if categoria_selecionada != 'Qualquer':
+                parametro +=f'&category={categoria_selecionada}'
+        if dificuldade:
+            if dificuldade != 'Qualquer dificuldade':
+                parametro+=f'&difficulty={dificuldade}'
+        if tipo_de_pergunta:
+            if tipo_de_pergunta != 'Qualquer tipo':
+                parametro+=f'&type={tipo_de_pergunta}'
+
+        nome = encontrar_ctr("input_nome").value
+        
+        #Adiciona o token a requisição e limpa as campos de questao atual e tipo
+        parametro+=token
+        questao_atual.value = ''
+        questao_tipo.value = ''
+        buscar_dados(0, 1)
+
+    #Duas versões da mesma função porém com game_mode diferente
+    #Isso foi feito para conseguir rodar essas funções em uma função lambda sem parametros
+    def iniciar_jogo_normal(e):
+        global categoria_selecionada
+        global dificuldade
+        global tipo_de_pergunta
+        global parametro
+        global token
+        global nome
+        if categoria_selecionada:
+            if categoria_selecionada != 'Qualquer':
+                parametro +=f'&category={categoria_selecionada}'
+        if dificuldade:
+            if dificuldade != 'Qualquer Dificuldade':
+                parametro+=f'&difficulty={dificuldade}'
+        if tipo_de_pergunta:
+            if tipo_de_pergunta != 'Qualquer Tipo':
+                parametro+=f'&type={tipo_de_pergunta}'
+
+        campo_nome = encontrar_ctr("input_nome")
+        if campo_nome.value:
+            nome = campo_nome.value
+        else:
+            nome = '???'
+        
+        parametro+=token
+        questao_atual.value = ''
+        questao_tipo.value = ''
+        buscar_dados(0, 2)
 
     def inicio(e=0,vitoria=False):
         #Função que recria a tela inicial do jogo ao ganhar/perder e exibe uma mensagem e leaderboard

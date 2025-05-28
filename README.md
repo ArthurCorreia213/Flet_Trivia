@@ -48,5 +48,6 @@ libretranslate --port 5000
 
 5. Rode a aplicação Flet
 ```
+cd src
 flet run
 ```
