@@ -1,5 +1,5 @@
 [project]
-name = "flet-app"
+name = "nova-pasta"
 version = "0.1.0"
 description = ""
 readme = "README.md"
@@ -8,7 +8,7 @@ authors = [
     { name = "Flet developer", email = "you@example.com" }
 ]
 dependencies = [
-  "flet==0.28.2"
+  "flet==0.28.1"
 ]
 
 [tool.flet]
@@ -18,7 +18,7 @@ org = "com.mycompany"
 
 # project display name that is used as an app title on Android and iOS home screens,
 # shown in window titles and about app dialogs on desktop.
-product = "flet-app"
+product = "nova-pasta"
 
 # company name to display in about app dialogs
 company = "Flet"
@@ -31,11 +31,11 @@ path = "src"
 
 [tool.uv]
 dev-dependencies = [
-    "flet[all]==0.28.2",
+    "flet[all]==0.28.1",
 ]
 
 [tool.poetry]
 package-mode = false
 
 [tool.poetry.group.dev.dependencies]
-flet = {extras = ["all"], version = "0.28.2"}
+flet = {extras = ["all"], version = "0.28.1"}

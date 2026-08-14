@@ -65,6 +65,13 @@ def main(page: ft.Page):
     dificuldades.append(ft.DropdownOption(key='medium', content=ft.Text(value='Médio')))
     dificuldades.append(ft.DropdownOption(key='hard', content=ft.Text(value='Difícil')))
 
+        
+    def encontrar_id_categoria(name):
+        global categoria_selecionada
+        for i in categorias:
+            if i['name'] == name:
+                return i['id']
+
     categorias = [{'id':'Qualquer','name':'Qualquer Categoria'},{"id":9,"name":"Conhecimento Geral"},{"id":10,"name":"Livros"},{"id":11,"name":"Filmes"},{"id":12,"name":"Música"},{"id":13,"name":"Teatro e Musicais"},{"id":14,"name":"Televisão"},{"id":15,"name":"Video Games"},{"id":16,"name":"Jogos de Tabuleiro"},{"id":17,"name":"Ciências e Natureza"},{"id":18,"name":"Computadores"},{"id":19,"name":"Matemática"},{"id":20,"name":"Mitologias"},{"id":21,"name":"Esportes"},{"id":22,"name":"Geografia"},{"id":23,"name":"História"},{"id":24,"name":"Politica"},{"id":25,"name":"Arte"},{"id":26,"name":"Celebridades"},{"id":27,"name":"Animais"},{"id":28,"name":"Veiculos"},{"id":29,"name":"Quadrinhos"},{"id":30,"name":"Ferramentas"},{"id":31,"name":"Anime e Mangá"},{"id":32,"name":"Desenhos e Animações"}]
 
     def categorias_func():
@@ -516,12 +523,7 @@ def main(page: ft.Page):
                 if ctr.key == key:
                     return ctr
         return False
-    
-    def encontrar_id_categoria(name):
-        global categoria_selecionada
-        for i in categorias:
-            if i['name'] == name:
-                return i['id']
+
     
     botao = ft.ElevatedButton("Iniciar Infinito", on_click=iniciar_jogo_inf, key='botao_inicio_inf')
     botao_ = ft.ElevatedButton("Iniciar Finito", on_click=iniciar_jogo_normal, key='botao_inicio_fin')

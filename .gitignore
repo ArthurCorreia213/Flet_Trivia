@@ -54,7 +54,6 @@ cover/
 # Translations
 *.mo
 *.pot
-db
 
 # Django stuff:
 *.log
@@ -162,4 +161,3 @@ cython_debug/
 
 # Flet
 storage/
-db

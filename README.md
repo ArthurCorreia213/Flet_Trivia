@@ -1,53 +1,81 @@
-# Jogo de Trivia feito em Flet
+# NovaPasta app
 
-- Mais de 4000 perguntas
-- Tradução em pt-BR 
-- Modo tradicional com 10 perguntas
-- Modo infinito
-- Placar com as melhores pontuações registradas
+## Run the app
 
-## Ferramentas utilizadas
+### uv
 
-+ Flet - GUI e lógica
-+ Open Trivia Database (opentdb.com) - Banco de Dados de perguntas e API
-+ LibreTranslate - API de tradução 
-+ SQLite - Armazenamento de placar
-
-## Como executar:
-
-### Requisitos:
-
-+ Python 3.10+
-+ Git
-
-1. Clone o Repositorio
-```
-git clone 'https://github.com/ArthurCorreia213/Flet_Trivia' &
-cd Flet_Trivia &
-python -m venv .venv
-```
-2. Execute o ambiente virtual (opcional)
-```
-.venv\Scripts\activate
-```
-3. Instale os requisitos
-```
-pip install -r requirements.txt
-```
-4. Inicialize o servidor de tradução (opcional)
+Run as a desktop app:
 
 ```
-libretranslate --load-only en,pt-BR --port 5000
+uv run flet run
 ```
 
-Em caso de erro pode ser necessário baixar todas linguagens
-Para isso:
+Run as a web app:
+
 ```
-libretranslate --port 5000
+uv run flet run --web
 ```
 
-5. Rode a aplicação Flet
+### Poetry
+
+Install dependencies from `pyproject.toml`:
+
 ```
-cd src
-flet run
+poetry install
 ```
+
+Run as a desktop app:
+
+```
+poetry run flet run
+```
+
+Run as a web app:
+
+```
+poetry run flet run --web
+```
+
+For more details on running the app, refer to the [Getting Started Guide](https://flet.dev/docs/getting-started/).
+
+## Build the app
+
+### Android
+
+```
+flet build apk -v
+```
+
+For more details on building and signing `.apk` or `.aab`, refer to the [Android Packaging Guide](https://flet.dev/docs/publish/android/).
+
+### iOS
+
+```
+flet build ipa -v
+```
+
+For more details on building and signing `.ipa`, refer to the [iOS Packaging Guide](https://flet.dev/docs/publish/ios/).
+
+### macOS
+
+```
+flet build macos -v
+```
+
+For more details on building macOS package, refer to the [macOS Packaging Guide](https://flet.dev/docs/publish/macos/).
+
+### Linux
+
+```
+flet build linux -v
+```
+
+For more details on building Linux package, refer to the [Linux Packaging Guide](https://flet.dev/docs/publish/linux/).
+
+### Windows
+
+```
+flet build windows -v
+```
+
+For more details on building Windows package, refer to the [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
