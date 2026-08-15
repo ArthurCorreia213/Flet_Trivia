@@ -406,7 +406,7 @@ def main(page: ft.Page):
 
             try:
                 lbt_response = requests.post(
-                        "http://localhost:5000/translate",
+                        "http://localhost:10000/translate",
                         headers={ "Content-Type": "application/json" },
                         json={
                             "q": (respostas_str+unescape(data['question'])).split('/ '),
@@ -440,7 +440,6 @@ def main(page: ft.Page):
             except Exception as e:
                 print(e)
                 print("ERRO NA REQUISIÇÃO")
-
 
                 if unescape(data['type'])== 'boolean':
                     wrong = q[0]
