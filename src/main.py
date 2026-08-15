@@ -320,8 +320,8 @@ def main(page: ft.Page):
                 erros+=1
                 erros_exibicao.value += '❌'
 
-        sleep(2.5)
         page.update()
+        sleep(2.5)
         global game_mode
         game_loop(game_mode)
         #buscar_dados(0,game_mode,False)
