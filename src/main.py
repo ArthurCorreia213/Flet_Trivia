@@ -3,6 +3,7 @@ import requests
 from html import unescape
 from random import randint
 import sqlite3
+from time import sleep
 
 #Parametro de requisição da API de perguntas; 
 #Token é gerado automaticamente ao iniciar o jogo
@@ -255,22 +256,6 @@ def main(page: ft.Page):
 
         page.controls.clear()
 
-
-        # remover = []
-        # for ctr in page.controls:
-        #     print(ctr)
-        #     print(isinstance(ctr, ft.ElevatedButton))
-        #     print(isinstance(ctr, ft.Dropdown))
-        #     if 'questao_atual' not in ctr.key:
-        #         remover.append(ctr)
-        #     else:
-        #         ctr.value = ''
-
-        # for i in remover:
-        #     page.controls.remove(i)
-
-        # print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRESET ATIVADO')
-        # print(page.controls)
         inicio(0,vitoria)
 
     def buscar_dados(e, modo=game_mode, new_game=True):
@@ -334,7 +319,8 @@ def main(page: ft.Page):
             else:
                 erros+=1
                 erros_exibicao.value += '❌'
-               
+
+        sleep(2.5)
         page.update()
         global game_mode
         game_loop(game_mode)
@@ -444,6 +430,7 @@ def main(page: ft.Page):
                     #print(traducao)
                 else:
                     print("ERRO AO TRADUZIR")
+                    raise Exception
                     #print(lbt_response.text)
 
             except Exception as e:
@@ -528,4 +515,4 @@ def main(page: ft.Page):
 
     page.add(nome_input, botao, botao_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao)
 
-ft.app(main)
+app = ft.app(main, export_asgi_app=True)
