@@ -1,7 +1,9 @@
 # Jogo de Trivia feito em Flet
 
+ - [Jogue Online clicando aqui](https://flet-trivia.onrender.com)
+
 - Mais de 4000 perguntas
-- Tradução em pt-BR 
+- Tradução em pt-BR (versão local)
 - Modo tradicional com 10 perguntas
 - Modo infinito
 - Placar com as melhores pontuações registradas
@@ -13,7 +15,7 @@
 + LibreTranslate - API de tradução 
 + SQLite - Armazenamento de placar
 
-## Como executar:
+## Como executar localmente:
 
 ### Requisitos:
 
@@ -22,8 +24,8 @@
 
 1. Clone o Repositorio
 ```
-git clone 'https://github.com/ArthurCorreia213/Flet_Trivia' &
-cd Flet_Trivia &
+git clone 'https://github.com/ArthurCorreia213/Flet_Trivia' &&
+cd Flet_Trivia &&
 python -m venv .venv
 ```
 2. Execute o ambiente virtual (opcional)
@@ -48,6 +50,6 @@ libretranslate --port 5000
 
 5. Rode a aplicação Flet
 ```
-cd src
+cd src &&
 flet run
 ```
