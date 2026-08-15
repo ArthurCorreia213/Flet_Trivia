@@ -437,6 +437,7 @@ def main(page: ft.Page):
                     #print(traducao)
                 else:
                     print("ERRO AO TRADUZIR")
+                    raise Exception
                     #print(lbt_response.text)
 
             except Exception as e:
