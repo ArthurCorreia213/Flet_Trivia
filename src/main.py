@@ -344,8 +344,6 @@ def main(page: ft.Page):
         global dados
         global pontuacao
         global nome
-        global wrong
-        global right
 
         for ctr in page.controls:
             if ctr.key =='questao_atual':
