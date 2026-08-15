@@ -109,6 +109,7 @@ def main(page: ft.Page):
     dd = ft.Dropdown(
         editable=True,
         label="Categorias",
+                                alignment=ft.MainAxisAlignment.CENTER,
         options=categorias_func(),
         on_change=dropdown_changed,
         key='dd'
@@ -261,23 +262,6 @@ def main(page: ft.Page):
                 
 
         page.controls.clear()
-
-
-        # remover = []
-        # for ctr in page.controls:
-        #     print(ctr)
-        #     print(isinstance(ctr, ft.ElevatedButton))
-        #     print(isinstance(ctr, ft.Dropdown))
-        #     if 'questao_atual' not in ctr.key:
-        #         remover.append(ctr)
-        #     else:
-        #         ctr.value = ''
-
-        # for i in remover:
-        #     page.controls.remove(i)
-
-        # print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRESET ATIVADO')
-        # print(page.controls)
         inicio(0,vitoria)
 
     def buscar_dados(e, modo=game_mode, new_game=True):
@@ -457,16 +441,15 @@ def main(page: ft.Page):
                 print(e)
                 print("ERRO NA REQUISIÇÃO")
 
-                traducao = q
 
                 if unescape(data['type'])== 'boolean':
-                    wrong = traducao[0]
-                    right = traducao[1] 
-                    question = ' '.join(traducao[2:])
+                    wrong = q[0]
+                    right = q[1] 
+                    question = ' '.join(q[2:])
                 else:
-                    wrong = traducao[:3]
-                    right = traducao[3]
-                    question = ' '.join(traducao[4:])
+                    wrong = q[:3]
+                    right = q[3]
+                    question = ' '.join(q[4:])
 
                 questao_body.value = question
             
@@ -530,4 +513,4 @@ def main(page: ft.Page):
 
     page.add(nome_input, botao, botao_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao)
 
-ft.app(main)
+ft.app(main, export_asgi_app=True)
