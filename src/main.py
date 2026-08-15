@@ -513,4 +513,4 @@ def main(page: ft.Page):
 
     page.add(nome_input, botao, botao_, pontuacao_txt, questao_atual, questao_tipo, questao_dificuldade, questao_categoria, questao_body, resultado, erros_exibicao)
 
-ft.app(main, export_asgi_app=True)
+app = ft.app(main, export_asgi_app=True)
